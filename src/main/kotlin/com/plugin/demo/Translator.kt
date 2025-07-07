@@ -177,6 +177,9 @@ class Translator : AnAction() {
         }
         translateListener.afterTranslated(project)
 
+        // 点击翻译按钮时，将原文与译文添加到自动提示 provider 的提示列表中
+        TranslatorTextProvider.items.add(text ?: "")
+        TranslatorTextProvider.items.add("模拟翻译结果")
         Notifications.Bus.notify(
             Notification(
                 "Translator", "小天才翻译件", "选中的内容为：$text",

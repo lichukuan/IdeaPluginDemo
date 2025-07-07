@@ -150,6 +150,10 @@ class TranslatorButtonActionListener(val window: TranslatorWindow): AbstractActi
         val toLang = langMap[window.comboBox2?.selectedItem]
         // 翻译后，将文本设置到翻译结果文本输入框
         window.translateTextArea?.text = "模拟翻译结果"
+
+        // 点击翻译按钮时，将原文与译文添加到自动提示 provider 的提示列表中
+        TranslatorTextProvider.items.add(originalText ?: "")
+        TranslatorTextProvider.items.add("模拟翻译结果")
     }
 
 }

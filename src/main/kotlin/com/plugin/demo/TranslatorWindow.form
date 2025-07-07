@@ -86,7 +86,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="67e5f" class="javax.swing.JTextArea" binding="originTextArea">
+                      <component id="67e5f" class="com.intellij.util.textCompletion.TextFieldWithCompletion" binding="originTextArea" custom-create="true">
                         <constraints/>
                         <properties/>
                       </component>
@@ -130,7 +130,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="a264c" class="javax.swing.JTextArea" binding="translateTextArea">
+                      <component id="a264c" class="com.intellij.util.textCompletion.TextFieldWithCompletion" binding="translateTextArea" custom-create="true">
                         <constraints/>
                         <properties/>
                       </component>

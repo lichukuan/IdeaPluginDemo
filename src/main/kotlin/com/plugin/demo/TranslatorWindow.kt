@@ -1,5 +1,9 @@
 package com.plugin.demo
 
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.ui.EditorTextField
+import com.intellij.ui.TextFieldWithAutoCompletionListProvider
+import com.intellij.util.textCompletion.TextFieldWithCompletion
 import javax.swing.*
 import javax.swing.table.DefaultTableModel
 
@@ -10,9 +14,11 @@ class TranslatorWindow {
     var noteTable: JTable? = null
     var translatorPanel: JPanel? = null
     var comboBox1: JComboBox<String>? = null
-    var originTextArea: JTextArea? = null
+    // 不清楚为什么无法通过 Morph Component（变形组件） 来改变 form 文件的
+    // 的内容。这里是通过 vscode 来编辑 form 文件实现的
+    var originTextArea: TextFieldWithCompletion? = null
     var comboBox2: JComboBox<String>? = null
-    var translateTextArea: JTextArea? = null
+    var translateTextArea: TextFieldWithCompletion? = null
     var translateButton: JButton? = null
     var mainPanel: JPanel? = null
 
@@ -32,5 +38,34 @@ class TranslatorWindow {
 
         // 按钮添加监听器
         translateButton?.addActionListener(TranslatorButtonActionListener(this))
+
+        originTextArea?.isEnabled = true
+        translateTextArea?.isEnabled = true
+    }
+
+    // 在该方法中编写自定义 UI 组件初始化代码。
+    private fun createUIComponents() {
+        originTextArea = TextFieldWithCompletion(ProjectManager.getInstance().defaultProject,
+            TranslatorTextProvider(), "", true, true, true, true)
+
+        translateTextArea = TextFieldWithCompletion(ProjectManager.getInstance().defaultProject,
+            TranslatorTextProvider(), "", true, true, true, true)
+
+    }
+}
+
+// 实现自动补齐的功能
+class TranslatorTextProvider: TextFieldWithAutoCompletionListProvider<String>(TranslatorTextProvider.items) {
+
+    companion object {
+        // 自动提示补全的所有可选项列表，每当我们进行翻译时，会往改列表添加元素，这些元素都是一个完整的单词
+        @JvmStatic
+        val items = HashSet<String>()
+    }
+
+    override fun getLookupString(item: String): String {
+        // 整个输入文本框中的文本，我们只关注空格隔开后的最后一个字符串，
+        // 例如：“ABC CB”这段文本，需要进行自动提示的文本前缀为 CB
+        return item.substring(item.lastIndexOf(" ") + 1);
     }
 }
