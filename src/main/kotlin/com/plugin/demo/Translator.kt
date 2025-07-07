@@ -17,9 +17,6 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.JBColor
 import com.intellij.ui.content.ContentFactory
-import com.intellij.util.messages.Topic
-import com.sun.jna.platform.win32.WinUser
-import org.apache.commons.collections.map.LinkedMap
 import java.awt.Dimension
 import java.awt.GridLayout
 import java.awt.event.FocusEvent
@@ -251,11 +248,11 @@ class TranslatorToolsWindow : ToolWindowFactory {
 
     companion object {
         @JvmStatic
-        val note = TranslatorNote()
+        val note = TranslatorWindow()
 
         @JvmStatic
         fun addNote(from: String, to: String) {
-            (note.table.model as DefaultTableModel).addRow(arrayOf(from, to))
+            (note.noteTable?.model as DefaultTableModel).addRow(arrayOf(from, to))
         }
     }
 
@@ -268,7 +265,7 @@ class TranslatorToolsWindow : ToolWindowFactory {
         // 创建我们的工具栏界面，TranslatorNote 是基于 Swing 实现的一个窗口视图
 
         // 在界面工厂中创建翻译插件的界面
-        val content = contentFactory.createContent(note.notePanel, "", false)
+        val content = contentFactory.createContent(note.mainPanel, "", false)
         // 将被界面工厂代理后创建的content，添加到工具栏窗口管理器中
         toolWindow.contentManager.addContent(content)
     }

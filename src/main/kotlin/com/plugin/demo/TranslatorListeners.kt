@@ -12,6 +12,8 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.util.messages.Topic
+import java.awt.event.ActionEvent
+import javax.swing.AbstractAction
 
 
 /**
@@ -129,3 +131,26 @@ class TranslatorActionListenerB : TranslateListener {
         )
     }
 }
+
+/**
+ * 为翻译按钮增加点击监听
+ */
+class TranslatorButtonActionListener(val window: TranslatorWindow): AbstractAction() {
+
+    val langMap = HashMap<String, String>()
+        .apply {
+            put("中文", "zh")
+            put("英文", "en")
+        }
+
+    override fun actionPerformed(e: ActionEvent?) {
+        // 获取原语言文本、原语言、和目标翻译语言
+        val originalText = window.originTextArea?.text
+        val fromLang = langMap[window.comboBox1?.selectedItem]
+        val toLang = langMap[window.comboBox2?.selectedItem]
+        // 翻译后，将文本设置到翻译结果文本输入框
+        window.translateTextArea?.text = "模拟翻译结果"
+    }
+
+}
+
