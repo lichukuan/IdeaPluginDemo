@@ -33,5 +33,8 @@
                 instance="com.plugin.demo.TranslateConfigurable"
                 id="com.plugin.demo.TranslateConfigurable"
                 displayName="Translator"/>
+        <applicationService serviceImplementation="com.plugin.demo.TranslatorSetting"/>
+        <projectService serviceImplementation="com.plugin.demo.TranslatorCache"/>
+        <toolWindow id="Translator" anchor="right" factoryClass="com.plugin.demo.TranslatorToolsWindow"/>
     </extensions>
 </idea-plugin>

@@ -6,15 +6,29 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.JBColor
+import com.intellij.ui.content.ContentFactory
+import com.sun.jna.platform.win32.WinUser
+import org.apache.commons.collections.map.LinkedMap
+import java.awt.Dimension
 import java.awt.GridLayout
 import java.awt.event.FocusEvent
 import java.awt.event.FocusListener
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JTable
 import javax.swing.JTextField
+import javax.swing.table.DefaultTableModel
 
 
 /**
@@ -31,11 +45,11 @@ class TranslateConfigurable : Configurable {
 
         @JvmStatic
         @Volatile
-        var app_id = ""
+        var app_id = TranslatorSetting.getInstance().appID
 
         @JvmStatic
         @Volatile
-        var security_key = ""
+        var security_key = TranslatorSetting.getInstance().securityKey
     }
 
     private val componentUtils = ComponentUtils()
@@ -68,10 +82,17 @@ class TranslateConfigurable : Configurable {
     override fun apply() {
         app_id = componentUtils.appID.text
         security_key = componentUtils.securityKey.text
+        TranslatorSetting.getInstance().apply {
+            appID = componentUtils.appID.text
+            securityKey = componentUtils.securityKey.text
+        }
     }
 
 }
 
+/**
+ * Setting/Preferences 中显示的UI组件
+ */
 class ComponentUtils {
     companion object {
         const val APP_ID_HINT = "请输入appID"
@@ -79,12 +100,14 @@ class ComponentUtils {
     }
 
     val appID = JTextField().apply {
-        text = APP_ID_HINT
+        text = TranslatorSetting.getInstance().appID.ifEmpty {
+            APP_ID_HINT
+        }
         foreground = JBColor.GRAY
         addFocusListener(TextFieldListener(this, APP_ID_HINT))
     }
     val securityKey = JTextField().apply {
-        text = SECURITY_KEY_HINT
+        text = TranslatorSetting.getInstance().securityKey.ifEmpty { SECURITY_KEY_HINT }
         foreground = JBColor.GRAY
         addFocusListener(TextFieldListener(this, SECURITY_KEY_HINT))
     }
@@ -136,7 +159,17 @@ class Translator : AnAction() {
         val editor = p0.getData(CommonDataKeys.EDITOR)
         // getSelectionModel() 可获取到鼠标选中文本对象，通过 getSelectedText() 方法获取到选中的文本字符串
         val text = editor?.selectionModel?.selectedText ?: ""
-        println("选中的内容为：$text")
+        // 模拟翻译
+        p0.project?.let {
+            TranslatorCache.getInstance(it)
+                .transCache
+                .put(text, "模拟翻译结果")
+            TranslatorCache.getInstance(it)
+                .transCache.forEach { it ->
+                    TranslatorToolsWindow.addNote(it.key, it.value)
+                }
+            
+        }
         Notifications.Bus.notify(
             Notification(
                 "Translator", "小天才翻译件", "选中的内容为：$text",
@@ -145,4 +178,104 @@ class Translator : AnAction() {
         )
     }
 
+}
+
+/**
+ * 持久化存储数据，这里的泛型就是需要持久化的数据
+ * 在 \IdeaPluginDemo\build\idea-sandbox\IC-2024.2.5\config\options\translator.xml 中
+ * 可以看到保存的信息
+ */
+@State(name = "translator", storages = [Storage(value = "translator.xml")])
+class TranslatorSetting() : PersistentStateComponent<TranslatorSetting> {
+
+    var appID: String = ""
+    var securityKey: String = ""
+
+    companion object {
+        @JvmStatic
+        fun getInstance(): TranslatorSetting {
+            return ApplicationManager.getApplication().getService(TranslatorSetting::class.java)
+        }
+    }
+
+    override fun getState(): TranslatorSetting? {
+        return this
+    }
+
+    override fun loadState(p0: TranslatorSetting) {
+        this.appID = p0.appID
+        this.securityKey = p0.securityKey
+    }
+}
+
+/**
+ * 缓存之前已经翻译过的数据
+ */
+@State(name = "translatorcache", storages = [Storage(value = "translator-cache.xml")])
+class TranslatorCache : PersistentStateComponent<TranslatorCache> {
+
+    companion object {
+        @JvmStatic
+        fun getInstance(project: Project): TranslatorCache {
+            return project.getService(TranslatorCache::class.java)
+        }
+    }
+
+    // 不能设置 private set 不然无法序列化
+    var transCache = LinkedHashMap<String, String>()
+
+    override fun getState(): TranslatorCache? {
+        return this
+    }
+
+    override fun loadState(p0: TranslatorCache) {
+        this.transCache = p0.transCache
+    }
+
+}
+
+/**
+ * 显示翻译结果的工具栏窗口
+ */
+class TranslatorToolsWindow: ToolWindowFactory {
+
+    companion object {
+        @JvmStatic
+        val note = TranslatorNote()
+
+        @JvmStatic
+        fun addNote(from: String, to: String) {
+            (note.table.model as DefaultTableModel).addRow(arrayOf(from, to))
+        }
+    }
+
+    override fun createToolWindowContent(
+        project: Project,
+        toolWindow: ToolWindow
+    ) {
+         // ContentFactory 在 IntelliJ 平台 SDK 中负责 UI 界面的管理
+        val contentFactory = ContentFactory.getInstance();
+        // 创建我们的工具栏界面，TranslatorNote 是基于 Swing 实现的一个窗口视图
+
+        // 在界面工厂中创建翻译插件的界面
+        val content = contentFactory.createContent(note.notePanel, "", false)
+        // 将被界面工厂代理后创建的content，添加到工具栏窗口管理器中
+        toolWindow.contentManager.addContent(content)
+    }
+
+}
+
+/**
+ * 基于 swing 实现的窗口类
+ */
+class TranslatorNote {
+
+    val table = JTable().apply {
+        model = DefaultTableModel(null, arrayOf("原文", "译文"))
+        autoResizeMode = JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS
+    }
+
+    val notePanel = JScrollPane(table).apply {
+        size = Dimension(200, 800)
+    }
 }
