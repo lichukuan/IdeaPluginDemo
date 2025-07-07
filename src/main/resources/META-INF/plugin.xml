@@ -1,6 +1,6 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.lichukuan.ideaplugindemo</id>
+    <id>com.plugin.demo</id>
     <name>IdeaPluginDemo</name>
     <vendor>lichukuan</vendor>
 
@@ -8,8 +8,15 @@
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.lichukuan.ideaplugindemo.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.lichukuan.ideaplugindemo.startup.MyProjectActivity" />
-    </extensions>
+    <!--    <extensions defaultExtensionNs="com.intellij">-->
+    <!--        <toolWindow factoryClass="com.github.lichukuan.ideaplugindemo.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>-->
+    <!--        <postStartupActivity implementation="com.github.lichukuan.ideaplugindemo.startup.MyProjectActivity" />-->
+    <!--    </extensions>-->
+    <actions>
+        <action id="com.plugin.demo.HelloAction"
+                class="com.plugin.demo.HelloAction" description="hello world">
+            <!--   如果使用快捷键没有效果，可以看一下是否是快捷键冲突了   -->
+            <keyboard-shortcut first-keystroke="control alt 9" keymap="$default"/>
+        </action>
+    </actions>
 </idea-plugin>
