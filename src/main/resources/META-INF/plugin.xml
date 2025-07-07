@@ -18,5 +18,20 @@
             <!--   如果使用快捷键没有效果，可以看一下是否是快捷键冲突了   -->
             <keyboard-shortcut first-keystroke="control alt 9" keymap="$default"/>
         </action>
+        <action id="Translator" class="com.plugin.demo.Translator" description="Translator" text="Translator">
+            <!-- 绑定快捷键，此处也可以选择不绑定。 -->
+            <keyboard-shortcut first-keystroke="control alt 8" keymap="$default"/>
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- 在此处注册我们实现的拓展点 -->
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.plugin.demo.TranslateConfigurable"
+                id="com.plugin.demo.TranslateConfigurable"
+                displayName="Translator"/>
+    </extensions>
 </idea-plugin>
