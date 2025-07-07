@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.JBColor
 import com.intellij.ui.content.ContentFactory
+import com.intellij.util.messages.Topic
 import com.sun.jna.platform.win32.WinUser
 import org.apache.commons.collections.map.LinkedMap
 import java.awt.Dimension
@@ -146,6 +147,7 @@ class ComponentUtils {
 class Translator : AnAction() {
 
     override fun actionPerformed(p0: AnActionEvent) {
+        val project = p0.project ?: return
         if (TranslateConfigurable.app_id.isEmpty() || TranslateConfigurable.security_key.isEmpty()) {
             Notifications.Bus.notify(
                 Notification(
@@ -156,6 +158,12 @@ class Translator : AnAction() {
             )
             return
         }
+
+        val messageBus = project.messageBus
+        // 表明了发布的消息事件是TranslateListener 中声明的翻译监听器 Topic。
+        val translateListener = messageBus.syncPublisher(TranslateListener.TRANSLATE_TOPIC)
+        translateListener.beforeTranslated(project)
+
         val editor = p0.getData(CommonDataKeys.EDITOR)
         // getSelectionModel() 可获取到鼠标选中文本对象，通过 getSelectedText() 方法获取到选中的文本字符串
         val text = editor?.selectionModel?.selectedText ?: ""
@@ -168,8 +176,10 @@ class Translator : AnAction() {
                 .transCache.forEach { it ->
                     TranslatorToolsWindow.addNote(it.key, it.value)
                 }
-            
+
         }
+        translateListener.afterTranslated(project)
+
         Notifications.Bus.notify(
             Notification(
                 "Translator", "小天才翻译件", "选中的内容为：$text",
@@ -237,7 +247,7 @@ class TranslatorCache : PersistentStateComponent<TranslatorCache> {
 /**
  * 显示翻译结果的工具栏窗口
  */
-class TranslatorToolsWindow: ToolWindowFactory {
+class TranslatorToolsWindow : ToolWindowFactory {
 
     companion object {
         @JvmStatic
@@ -253,7 +263,7 @@ class TranslatorToolsWindow: ToolWindowFactory {
         project: Project,
         toolWindow: ToolWindow
     ) {
-         // ContentFactory 在 IntelliJ 平台 SDK 中负责 UI 界面的管理
+        // ContentFactory 在 IntelliJ 平台 SDK 中负责 UI 界面的管理
         val contentFactory = ContentFactory.getInstance();
         // 创建我们的工具栏界面，TranslatorNote 是基于 Swing 实现的一个窗口视图
 
@@ -279,3 +289,4 @@ class TranslatorNote {
         size = Dimension(200, 800)
     }
 }
+

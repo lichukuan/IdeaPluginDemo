@@ -36,5 +36,17 @@
         <applicationService serviceImplementation="com.plugin.demo.TranslatorSetting"/>
         <projectService serviceImplementation="com.plugin.demo.TranslatorCache"/>
         <toolWindow id="Translator" anchor="right" factoryClass="com.plugin.demo.TranslatorToolsWindow"/>
+        <postStartupActivity implementation="com.plugin.demo.TranslatorNotifier"/>
     </extensions>
+    <projectListeners>
+        <listener class="com.plugin.demo.InitTranslatorWindowListener"
+                  topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
+
+        <listener class="com.plugin.demo.TranslatorActionListenerA"
+                  topic="com.plugin.demo.TranslateListener"/>
+
+        <listener class="com.plugin.demo.TranslatorActionListenerB"
+                  topic="com.plugin.demo.TranslateListener"/>
+
+    </projectListeners>
 </idea-plugin>
