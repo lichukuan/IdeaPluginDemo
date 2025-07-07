@@ -59,7 +59,8 @@ intellijPlatform {
         name = providers.gradleProperty("pluginName")
         version = providers.gradleProperty("pluginVersion")
 
-        // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
+        // 获取 README.md 文件中 <!-- Plugin description -->  <!-- Plugin description end --> 之间的内容
+        // 并作为该插件的描述
         description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
             val start = "<!-- Plugin description -->"
             val end = "<!-- Plugin description end -->"
@@ -72,6 +73,7 @@ intellijPlatform {
             }
         }
 
+        // 把项目的 changelog 作为该插件的更新信息
         val changelog = project.changelog // local variable for configuration cache compatibility
         // Get the latest available change notes from the changelog file
         changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->
