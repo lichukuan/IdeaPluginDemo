@@ -2,6 +2,7 @@ package com.plugin.demo
 
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.EditorTextField
+import com.intellij.ui.GotItTooltip
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider
 import com.intellij.util.textCompletion.TextFieldWithCompletion
 import javax.swing.*
@@ -41,6 +42,18 @@ class TranslatorWindow {
 
         originTextArea?.isEnabled = true
         translateTextArea?.isEnabled = true
+
+        tabbedPane1?.addChangeListener {
+            // 为上方的 tab 栏目设置监听器，处于翻译 tab 时引导用户
+            val tab = it.source as JTabbedPane
+            if (tab.selectedIndex == 0) return@addChangeListener
+            // 引导提示
+            GotItTooltip("got.it.id", "翻译插件",
+                ProjectManager.getInstance().defaultProject)
+                .withShowCount(100) // 为了方便调试，设置为100，该提示会出现 100 次
+                .withHeader("输入文本，点击翻译按钮即可完成翻译") // 引导提示内容
+                .show(translateButton!!, GotItTooltip.BOTTOM_MIDDLE)  // 引导提示位置设置在翻译按钮的正下方位置
+        }
     }
 
     // 在该方法中编写自定义 UI 组件初始化代码。

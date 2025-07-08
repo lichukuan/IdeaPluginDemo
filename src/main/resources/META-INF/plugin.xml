@@ -24,6 +24,26 @@
             <!-- 添加到鼠标右键菜单中 -->
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
+        <action id="DialogNotification" class="com.plugin.demo.DialogNotification" description="DialogNotification" text="DialogNotification">
+            <!-- 绑定快捷键，此处也可以选择不绑定。 -->
+            <keyboard-shortcut first-keystroke="control alt 7" keymap="$default"/>
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+
+        <action id="HintNotification" class="com.plugin.demo.HintNotification" description="HintNotification" text="HintNotification">
+            <!-- 绑定快捷键，此处也可以选择不绑定。 -->
+            <keyboard-shortcut first-keystroke="control alt 6" keymap="$default"/>
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+
+        <action id="TopLevelNotification" class="com.plugin.demo.TopLevelNotification" description="TopLevelNotification" text="TopLevelNotification">
+            <!-- 绑定快捷键，此处也可以选择不绑定。 -->
+            <keyboard-shortcut first-keystroke="control alt 5" keymap="$default"/>
+            <!-- 添加到鼠标右键菜单中 -->
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -42,6 +62,8 @@
         <toolWindow id="Translator" anchor="right" factoryClass="com.plugin.demo.TranslatorToolsWindow" icon="TranslatorIcons.TRANS"/>
 
         <postStartupActivity implementation="com.plugin.demo.TranslatorNotifier"/>
+
+        <editorNotificationProvider implementation="com.plugin.demo.BannerNotificationProvider"/>
     </extensions>
     <projectListeners>
         <listener class="com.plugin.demo.InitTranslatorWindowListener"
