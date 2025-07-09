@@ -44,6 +44,10 @@
             <!-- 添加到鼠标右键菜单中 -->
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
+
+        <action class="com.plugin.demo.CaseFormatAction" id="case format" text="code format" description="code format">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

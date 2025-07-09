@@ -5,10 +5,13 @@ import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.startup.ProjectActivity
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.util.messages.Topic
@@ -30,6 +33,12 @@ class TranslatorSettingListener : ProjectManagerListener {
  */
 class TranslatorNotifier : ProjectActivity {
     override suspend fun execute(project: Project) {
+
+        // 在项目启动后，注册虚拟文件监听器
+        LocalFileSystem.getInstance().addVirtualFileListener(VirtualFileListenerImpl())
+
+        EditorActionManager.getInstance().setActionHandler(IdeActions.ACTION_EDITOR_PASTE, EditorPasteListener())
+
         val notification =
             Notification("Print", "小天才翻译器", "请配置翻译API的appid和密钥", NotificationType.INFORMATION)
         notification.addAction(OpenTranslatorSettingAction())
