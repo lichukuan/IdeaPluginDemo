@@ -83,7 +83,7 @@
         <!-- extensions 属性：文件拓展格式-->
         <fileType
                 name="HTTP"
-                implementationClass="com.plugin.demo.language.HttpFileType"
+                implementationClass="com.plugin.demo.language.HTTPFileType"
                 fieldName="INSTANCE"
                 language="HTTP"
                 extensions="http"/>
@@ -99,6 +99,28 @@
 
         <codeInsight.lineMarkerProvider language="HTTP"
                                         implementationClass="com.plugin.demo.language.marker.CURLLineMarkerProvider"/>
+
+        <completion.contributor
+                language="HTTP"
+                implementationClass="com.plugin.demo.language.completion.CURLCommandCodeContributor"/>
+
+        <lang.documentationProvider
+                language="HTTP"
+                implementationClass="com.plugin.demo.language.document.CURLCommandDocumentProvider"/>
+
+        <lang.commenter
+                language="HTTP"
+                implementationClass="com.plugin.demo.language.commenter.CURLCommenter"/>
+
+        <lang.formatter
+                language="HTTP"
+                implementationClass="com.plugin.demo.language.format.CURLCommandFormattingModelBuilder"/>
+
+
+        <codeInsight.inlayProvider
+                order="first"
+                language="HTTP"
+                implementationClass="com.plugin.demo.language.inlay.CURLInlayHintsProvider"/>
     </extensions>
 
     <projectListeners>

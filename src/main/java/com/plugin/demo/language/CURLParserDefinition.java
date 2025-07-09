@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CURLParserDefinition implements ParserDefinition {
     // 声明解析器所被应用的语言文件
-    public static final IFileElementType FILE = new IFileElementType(HttpLanguage.getInstance());
+    public static final IFileElementType FILE = new IFileElementType(HTTPLanguage.INSTANCE);
 
     // createLexer 方法返回词法解析器，此处我们返回解析器适配类
     @Override
