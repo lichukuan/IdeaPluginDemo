@@ -42,12 +42,18 @@ class TranslateConfigurable : Configurable {
         const val SETTING_NAME = "Translator"
 
         @JvmStatic
-        @Volatile
-        var app_id = TranslatorSetting.getInstance().appID
+        var app_id
+            get() = TranslatorSetting.getInstance().appID
+            set(value) {
+                TranslatorSetting.getInstance().appID = value
+            }
 
         @JvmStatic
-        @Volatile
-        var security_key = TranslatorSetting.getInstance().securityKey
+        var security_key
+            get() = TranslatorSetting.getInstance().securityKey
+            set(value) {
+                TranslatorSetting.getInstance().securityKey = value
+            }
     }
 
     private val componentUtils = ComponentUtils()
@@ -250,8 +256,19 @@ class TranslatorCache : PersistentStateComponent<TranslatorCache> {
 class TranslatorToolsWindow : ToolWindowFactory {
 
     companion object {
+        /**
+         * 使用
+        @JvmStatic
+        val note
+            get() = TranslatorWindow()
+        代替
         @JvmStatic
         val note = TranslatorWindow()
+        因为 static 块会加载类时就初始化，但是这是可能插件服务还没有初始化
+         */
+        @JvmStatic
+        val note
+            get() = TranslatorWindow()
 
         @JvmStatic
         fun addNote(from: String, to: String) {
