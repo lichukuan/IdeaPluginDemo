@@ -5,6 +5,9 @@
     <vendor>lichukuan</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
+
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
@@ -46,6 +49,10 @@
         </action>
 
         <action class="com.plugin.demo.CaseFormatAction" id="case format" text="code format" description="code format">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+
+        <action class="com.plugin.demo.GetSPIInfoAction" id="spi info" text="spi info" description="spi info">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
     </actions>

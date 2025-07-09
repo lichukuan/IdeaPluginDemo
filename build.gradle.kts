@@ -62,7 +62,6 @@ intellijPlatform {
     pluginConfiguration {
         name = providers.gradleProperty("pluginName")
         version = providers.gradleProperty("pluginVersion")
-
         // 获取 README.md 文件中 <!-- Plugin description -->  <!-- Plugin description end --> 之间的内容
         // 并作为该插件的描述
         description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
