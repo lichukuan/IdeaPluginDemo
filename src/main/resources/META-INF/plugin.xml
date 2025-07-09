@@ -75,7 +75,32 @@
         <postStartupActivity implementation="com.plugin.demo.TranslatorNotifier"/>
 
         <editorNotificationProvider implementation="com.plugin.demo.BannerNotificationProvider"/>
+
+        <!-- implementationClass 属性：文件定义信息类路径-->
+        <!-- fieldName 属性：HTTPFileType 类中声明的单例对象字段名，-->
+        <!--implementationClass 与 fieldName 信息让 IDE 定位定义了文件信息的单例对象。->
+        <!- language 属性：语言名字，类似于 Java、Python-->
+        <!-- extensions 属性：文件拓展格式-->
+        <fileType
+                name="HTTP"
+                implementationClass="com.plugin.demo.language.HttpFileType"
+                fieldName="INSTANCE"
+                language="HTTP"
+                extensions="http"/>
+
+        <lang.parserDefinition
+                language="HTTP"
+                implementationClass="com.plugin.demo.language.CURLParserDefinition"/>
+
+
+        <lang.syntaxHighlighterFactory language="HTTP"
+                                       implementationClass="com.plugin.demo.language.highlighter.CURLSyntaxHighlighterFactory"/>
+
+
+        <codeInsight.lineMarkerProvider language="HTTP"
+                                        implementationClass="com.plugin.demo.language.marker.CURLLineMarkerProvider"/>
     </extensions>
+
     <projectListeners>
         <listener class="com.plugin.demo.InitTranslatorWindowListener"
                   topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
