@@ -121,6 +121,16 @@
                 order="first"
                 language="HTTP"
                 implementationClass="com.plugin.demo.language.inlay.CURLInlayHintsProvider"/>
+
+        <localInspection
+                bundle="messages.DataClass"
+                enabledByDefault="true"
+                groupBundle="messages.DataClass"
+                groupKey="inspection.dataclass.group.name"
+                groupPath="Kotlin"
+                implementationClass="com.plugin.demo.inspection.DataClassInspection"
+                key="inspection.dataclass.display.name"
+                language="kotlin" level="ERROR"/>
     </extensions>
 
     <projectListeners>
